@@ -24,37 +24,57 @@ class GamePlayPanel extends JPanel implements ActionListener {
             + File.separator + "Image" + File.separator + "BackGround.png");
     private ArrayList<Image> animalImages = new ArrayList<>();
     private ArrayList<Animal> animals = new ArrayList<>();
+
     private Timer timer;
-    int minGrassY = 180;
+    private int spawnCounter = 0;
+    private int spawnInterval = 10;
+    private int maxAnimals = 20;
+    
+    int minGrassY = 100;
     int maxGrassY = 550;
+
+    JTextField fill;
 
     GamePlayPanel() {
         setLayout(null);
+
+        // โหลดรูปสัตว์
         animalImages.add(new ImageIcon("Image/TinyChick.png").getImage());
         animalImages.add(new ImageIcon("Image/HonkingGoose.png").getImage());
         animalImages.add(new ImageIcon("Image/DaintyPig.png").getImage());
         animalImages.add(new ImageIcon("Image/TimberWolf.png").getImage());
 
-        for (int i = 0; i < 10; i++) {
-            boolean fromLeft = new Random().nextBoolean();
-            Image img = animalImages.get(new Random().nextInt(animalImages.size()));
-            int x;
-            int speed;
-            int y = minGrassY + new Random().nextInt(maxGrassY - minGrassY);
-            if (fromLeft) {
-                x = new Random().nextInt(100);
-                speed = 2 + new Random().nextInt(3);
-            } else {
-
-                x = Constant.Width - 100 + new Random().nextInt(50);
-                speed = -(2 + new Random().nextInt(3));
-            }
-            animals.add(new Animal(img, x, y, speed));
-
-        }
+        // ใส่ช่องพิมพ์
+        fill = new JTextField();
+        fill.setBounds(350, Constant.Height - 100, 300, 40);
+        fill.setFont(new Font("Arial", Font.BOLD, 18));
+        fill.setForeground(Color.BLACK);
+        fill.setBackground(new Color(255, 255, 255, 200));
+        add(fill);
 
         timer = new Timer(100, this);
         timer.start();
+    }
+
+    private void spawnAnimal() {
+        if (animals.size() >= maxAnimals) return;
+
+        boolean fromLeft = new Random().nextBoolean();
+        Image img = animalImages.get(new Random().nextInt(animalImages.size()));
+
+        int x;
+        int speed;
+        int y = minGrassY + new Random().nextInt(maxGrassY - minGrassY);
+
+        if (fromLeft) {
+            x = -50;
+            speed = 2 + new Random().nextInt(3);
+        } else {
+            x = Constant.Width + 50; // เริ่มนอกจอขวา
+            speed = -(2 + new Random().nextInt(3));
+        }
+
+        animals.add(new Animal(img, x, y, speed));
     }
 
     @Override
@@ -65,18 +85,25 @@ class GamePlayPanel extends JPanel implements ActionListener {
         for (Animal a : animals) {
             a.draw(g, this);
         }
-
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        spawnCounter++;
+
+        if (spawnCounter >= spawnInterval) {
+            spawnCounter = 0;
+            spawnAnimal();
+        }
         for (Animal a : animals) {
             a.update(getWidth());
         }
+
         repaint();
     }
 }
-class Animal{
+
+class Animal {
     private Image image;
     private int frameWidth = 16;
     private int frameHeight = 16;
@@ -85,7 +112,6 @@ class Animal{
 
     private int x, y;
     private int speed;
-    private Random rand = new Random();
 
     public Animal(Image img, int startX, int startY, int speed) {
         this.image = img;
@@ -97,13 +123,15 @@ class Animal{
     public void update(int panelWidth) {
         currentFrame = (currentFrame + 1) % frameCount;
         x += speed;
-        if (x > panelWidth) x = -frameWidth;
+
+        // ถ้าออกนอกจอไปอีกฝั่ง ให้ลบออก (หรือวนกลับ)
+        if (speed > 0 && x > panelWidth + 100) x = -50;
+        if (speed < 0 && x < -100) x = panelWidth + 50;
     }
 
     public void draw(Graphics g, JPanel panel) {
         int sx = currentFrame * frameWidth;
         int sy = 0;
-
         Graphics2D g2 = (Graphics2D) g;
 
         if (speed >= 0) {
@@ -117,8 +145,5 @@ class Animal{
                     sx, sy, sx + frameWidth, sy + frameHeight,
                     panel);
         }
-    }
-    public int getY() {
-        return y;
     }
 }
