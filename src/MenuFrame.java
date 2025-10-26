@@ -33,7 +33,11 @@ class MenuPanel extends JPanel {
     MenuPanel() throws IOException {
         bg = Toolkit.getDefaultToolkit()
                 .createImage(System.getProperty("user.dir") + File.separator + "Image" + File.separator + "bg1.png");
-        setLayout(null);
+        setLayout(new GridBagLayout());
+
+        Box box = Box.createVerticalBox();
+        box.setAlignmentX(Component.CENTER_ALIGNMENT);
+
 
         ImageIcon logoIcon = new ImageIcon(
                 System.getProperty("user.dir") + File.separator + "Image" + File.separator + "gameLogo.png");
@@ -45,8 +49,7 @@ class MenuPanel extends JPanel {
         Image scaledLogo = logoImg.getScaledInstance(newLogoWidth, newLogoHeight, Image.SCALE_SMOOTH);
         logoIcon = new ImageIcon(scaledLogo);
         logoLabel = new JLabel(logoIcon);
-        logoLabel.setBounds((Constant.Width - newLogoWidth) / 2, 15, newLogoWidth, newLogoHeight);
-        add(logoLabel);
+
 
         String basePath = System.getProperty("user.dir") + File.separator + "Image" + File.separator;
         BufferedImage hostImg = ImageIO.read(new File(basePath + "host.png"));
@@ -62,11 +65,10 @@ class MenuPanel extends JPanel {
         hostButton.setContentAreaFilled(false);
         hostButton.setFocusPainted(false);
         hostButton.setOpaque(false);
-        hostButton.setBounds((Constant.Width - hostWidth) / 2, 420, hostWidth, hostHeight);
         hostButton.addActionListener(e -> {
             System.out.println("Host");
         });
-        add(hostButton);
+
         repaint();
 
         BufferedImage joinImg = ImageIO.read(new File(basePath + "join.png"));
@@ -83,13 +85,23 @@ class MenuPanel extends JPanel {
         joinButton.setFocusPainted(false);
         joinButton.setOpaque(false);
 
-        joinButton.setBounds((Constant.Width - joinWidth) / 2, 540, joinWidth, joinHeight);
 
         joinButton.addActionListener(e -> {
             System.out.println("Join");
         });
-        add(joinButton);
+
         repaint();
+
+        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        hostButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        joinButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        box.add(logoLabel);
+        box.add(hostButton);
+        box.add(joinButton);
+        
+        add(box);
     }
 
     @Override
