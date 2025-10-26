@@ -43,8 +43,7 @@ class GamePlayPanel extends JPanel implements ActionListener {
         createTextField();
 
         new Thread(this::listenServer).start();
-        System.out.println("Game started with server connection!");
-        startCountdown();
+        System.out.println("🎮 Game started with server connection!");
     }
 
     private void startCountdown() {
@@ -62,15 +61,16 @@ class GamePlayPanel extends JPanel implements ActionListener {
 
     private void listenServer() {
         try {
-            String msg;
-            while ((msg = in.readLine()) != null) {
-                System.out.println("From server: " + msg);
+            String msg = in.readLine();
+            while (msg != null) {
+                System.out.println("📩 From server: " + msg);
 
                 if (msg.equals("START")) {
-                    startGame();
+                    startCountdown();
                 } else if (msg.startsWith("SPAWN")) {
                     spawnFromServer(msg);
                 }
+                msg = in.readLine();
             }
         } catch (IOException e) {
             System.out.println("Lost connection to server.");
@@ -95,6 +95,32 @@ class GamePlayPanel extends JPanel implements ActionListener {
         fill.setBounds(350, Constant.Height - 100, 300, 40);
         fill.setFont(new Font("Arial", Font.BOLD, 18));
         add(fill);
+
+        fill.addActionListener(e -> {
+            String text = fill.getText().trim().toLowerCase();
+            if (!text.isEmpty()) {
+                System.out.println("Type: " + text);
+
+                Animal target = null;
+                for (Animal a : animals) {
+                    if (a.getWord().equalsIgnoreCase(text)) {
+                        target = a;
+                        break;
+                    }
+                }
+
+                if (target != null) {
+                    animals.remove(target);
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "There is no word for this. \"" + text + "\"",
+                            "Incorrect",
+                            JOptionPane.WARNING_MESSAGE);
+                }
+
+                fill.setText("");
+            }
+        });
     }
 
     private void spawnFromServer(String msg) {
@@ -147,6 +173,10 @@ class Animal {
         this.y = startY;
         this.speed = speed;
         this.word = word;
+    }
+
+    public String getWord() {
+        return word;
     }
 
     public void update(int width) {
