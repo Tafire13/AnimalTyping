@@ -43,7 +43,6 @@ class GamePlayPanel extends JPanel implements ActionListener {
         createTextField();
 
         new Thread(this::listenServer).start();
-        System.out.println("🎮 Game started with server connection!");
     }
 
     private void startCountdown() {
@@ -63,7 +62,7 @@ class GamePlayPanel extends JPanel implements ActionListener {
         try {
             String msg = in.readLine();
             while (msg != null) {
-                System.out.println("📩 From server: " + msg);
+                System.out.println("From server: " + msg);
 
                 if (msg.equals("START")) {
                     startCountdown();
@@ -93,14 +92,28 @@ class GamePlayPanel extends JPanel implements ActionListener {
     private void createTextField() {
         fill = new JTextField();
         fill.setBounds(350, Constant.Height - 100, 300, 40);
+        fill.setHorizontalAlignment(JTextField.CENTER);
         fill.setFont(new Font("Arial", Font.BOLD, 18));
-        add(fill);
+        fill.setForeground(Color.BLACK);
+        fill.setOpaque(false);
+        fill.setBorder(null);
+        fill.setBackground(new Color(0, 0, 0, 0));
+
+        Image typeBar = Toolkit.getDefaultToolkit().createImage(System.getProperty("user.dir") + File.separator + "Image" + File.separator + "TextField"+ File.separator + "typingBar.png");
+
+        Image resized = typeBar.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
+
+        JLabel barLabel = new JLabel(new ImageIcon(resized));
+        barLabel.setBounds(fill.getX(), fill.getY(), fill.getWidth(), fill.getHeight());
+        barLabel.setLayout(new BorderLayout());
+        barLabel.setOpaque(false);
+
+        barLabel.add(fill);
+        add(barLabel);
 
         fill.addActionListener(e -> {
             String text = fill.getText().trim().toLowerCase();
             if (!text.isEmpty()) {
-                System.out.println("Type: " + text);
-
                 Animal target = null;
                 for (Animal a : animals) {
                     if (a.getWord().equalsIgnoreCase(text)) {
@@ -108,13 +121,12 @@ class GamePlayPanel extends JPanel implements ActionListener {
                         break;
                     }
                 }
-
                 if (target != null) {
                     animals.remove(target);
                 } else {
                     JOptionPane.showMessageDialog(this,
-                            "There is no word for this. \"" + text + "\"",
-                            "Incorrect",
+                            "INCORRECT \"" + text + "\"",
+                            "INCORRECT",
                             JOptionPane.WARNING_MESSAGE);
                 }
 
@@ -122,6 +134,8 @@ class GamePlayPanel extends JPanel implements ActionListener {
             }
         });
     }
+
+
 
     private void spawnFromServer(String msg) {
         String[] data = msg.split(" ");
