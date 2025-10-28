@@ -18,7 +18,7 @@ public class GamePlay extends JFrame {
 
 class GamePlayPanel extends JPanel implements ActionListener {
     private Image BackGround = Toolkit.getDefaultToolkit().createImage(
-            System.getProperty("user.dir") + File.separator + "Image" + File.separator + "BackGround.png"
+            System.getProperty("user.dir") + File.separator + "Image" + File.separator +  "backGround" + File.separator + "NewVer.png"
     );
 
     private ArrayList<Image> animalImages = new ArrayList<>();
