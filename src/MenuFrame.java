@@ -93,12 +93,11 @@ class MenuPanel extends JPanel {
                 Socket socket = new Socket("localhost", 1234);
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                // ✅ ตรวจว่าห้องเต็มไหม
-                socket.setSoTimeout(1000); // รอข้อมูลจาก Host 1 วินาที
+                socket.setSoTimeout(1000);
                 if (in.ready() && "FULL".equals(in.readLine())) {
                     JOptionPane.showMessageDialog(this,
-                            "❌ ห้องเต็มแล้ว (สูงสุด 4 คน)",
-                            "Join ไม่สำเร็จ",
+                            "FULL",
+                            "JOIN NOT SUCCESS",
                             JOptionPane.WARNING_MESSAGE);
                     socket.close();
                     return;
