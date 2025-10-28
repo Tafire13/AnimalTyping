@@ -11,6 +11,7 @@ public class Player {
         this.socket = socket;
     }
 
+    public void setName(String name) {this.name = name;}
     public String getName() { return name; }
     public int getId() { return id; }
     public Socket getSocket() { return socket; }
